@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<!--
+  ~ StreamTeam
+  ~ Copyright (C) 2019  University of Basel
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<html>
+<head>
+	<title>StreamTeam - Real-Time Football Web Client</title>
+	<meta charset="utf-8"/>
+
+	<!-- https://stackoverflow.com/questions/4472891/how-can-i-disable-zoom-on-a-mobile-web-page -->
+	<meta name="viewport" content="width=device-width, maximum-scale=0.7, initial-scale=0.7, user-scalable=0">
+
+	<!-- Favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="./favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="./favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="./favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="./favicons/manifest.json">
+	<link rel="mask-icon" href="./favicons/safari-pinned-tab.svg" color="#00a300">
+	<link rel="shortcut icon" href="./favicons/favicon.ico">
+	<meta name="msapplication-config" content="./favicons/browserconfig.xml">
+	<meta name="theme-color" content="#00a300">
+
+	<!-- Libraries -->
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.0/dist/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.selectbox/1.2.0/jquery.selectBox.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/tooltipster@4.2.7/dist/js/tooltipster.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/tooltipster-follower@0.1.5/dist/js/tooltipster-follower.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/graham_scan@1.0.4/graham_scan.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/heatmap.js@2.0.0/heatmap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/rgb-color@2.1.2/rgb-color.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/video.js@5.18.4/dist/video.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/protobufjs@6.8.8/dist/protobuf.min.js"></script>
+
+	<!-- StreamTeam Data Model -->
+	<script src="../streamteam-data-model/streamteam-data-model-lib.js"></script>
+
+	<!-- Configuration -->
+	<script src="js/Config.js"></script>
+
+	<!-- UI -->
+	<script src="js/ui/Resizer.js"></script>
+	<script src="js/ui/Field.js"></script>
+	<script src="js/ui/Heatmap.js"></script>
+	<script src="js/ui/EventNotifier.js"></script>
+	<script src="js/ui/UserInteraction.js"></script>
+	<script src="js/ui/TeamVisualization.js"></script>
+	<script src="js/ui/StatisticsAndGraphs.js"></script>
+
+	<!-- Abstract consumers -->
+	<script src="js/consumers/AbstractStreamConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/AbstractAtomicEventConsumer.js"></script>
+	<script src="js/consumers/nonatomicEvent/AbstractNonatomicEventConsumer.js"></script>
+	<script src="js/consumers/statistics/AbstractStatisticsConsumer.js"></script>
+
+	<!-- Special consumers -->
+	<script src="js/consumers/special/MatchMetadataConsumer.js"></script>
+	<script src="js/consumers/special/MatchTimeProgressEventConsumer.js"></script>
+	<script src="js/consumers/special/FieldObjectStateConsumer.js"></script>
+	<script src="js/consumers/special/OffsideLineStateConsumer.js"></script>
+	<script src="js/consumers/special/PressingStateConsumer.js"></script>
+	<script src="js/consumers/special/TeamAreaStateConsumer.js"></script>
+	<script src="js/consumers/special/HeatmapStatisticsConsumer.js"></script>
+
+	<!-- Atomic event consumers -->
+	<script src="js/consumers/atomicEvent/BallPossessionChangeEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/SuccessfulPassEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/InterceptionEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/MisplacedPassEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/ClearanceEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/DoublePassEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/PassSequenceEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/ShotOffTargetEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/GoalEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/FreekickEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/GoalkickEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/CornerkickEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/ThrowinEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/PenaltyEventConsumer.js"></script>
+	<script src="js/consumers/atomicEvent/KickoffEventConsumer.js"></script>
+
+	<!-- Non-atomic event consumers -->
+	<script src="js/consumers/nonatomicEvent/DribblingEventConsumer.js"></script>
+	<script src="js/consumers/nonatomicEvent/DuelEventConsumer.js"></script>
+	<script src="js/consumers/nonatomicEvent/UnderPressureEventConsumer.js"></script>
+
+	<!--- Statistics consumers -->
+	<script src="js/consumers/statistics/PassStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/PassSequenceStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/ShotStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/SetPlayStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/BallPossessionStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/DistanceStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/SpeedLevelStatisticsConsumer.js"></script>
+	<script src="js/consumers/statistics/DribblingStatisticsConsumer.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			// Hack to get jQuery-selectBox working with jQuery version >= 3.0 without throwing exceptions (before 3.0 andSelf was an alias to addBack -> the following line from the jQuery 2.2.4 code does this)
+			jQuery.fn.andSelf = jQuery.fn.addBack;
+
+			// === UserInteraction initialization ===
+			userInteraction = new UserInteraction();
+			userInteraction.initialize();
+
+			// === Create Resizer, Field, TeamVisualization and Heatmap object ===
+			resizer = new Resizer();
+			field = new Field();
+			teamVisualization = new TeamVisualization();
+			heatmap = new Heatmap();
+			// the resizing and the initialization methods are called in the MatchMetadataConsumer when the field size is read from the match metadata
+
+			// === Block event visualization for the first milliseconds in order to prevent displaying the notifiaction for data stream elements representing the last (but already passed) event of all event streams ===
+			setTimeout(function () {
+				userInteraction.blockEventVisualization = false;
+			}, 500);
+			
+			// === After a timeout: Start consuming the matches stream to fill the match selection list, start consuming the heatmapStatistics stream to fill the heatmap update interval dropdown, start the video, and start consuming the matchTimeProgressEvent stream ===
+			setTimeout(function () {
+				$('#match-selection-dropdown').selectBox({
+					mobile: true
+				});
+				matchMetadataConsumer = new MatchMetadataConsumer();
+				matchMetadataConsumer.startConsumption();
+
+				$('#below-field-heatmaps-info-updateInterval-dropdown').selectBox({
+					mobile: true
+				});
+				heatmapStatisticsConsumer = new HeatmapStatisticsConsumer();
+				heatmapStatisticsConsumer.startConsumption();
+
+				if(queryDict.matchId !== undefined) {
+					videoSelectionInterval = setInterval(function () {
+						console.log("Video Selection Attempt");
+						myPlayer = videojs('video');
+						myPlayer.ready(function() {
+							matchTimeProgressEventConsumer = new MatchTimeProgressEventConsumer();
+							matchTimeProgressEventConsumer.startConsumption();
+							if(matchMetadataConsumer.videoPath !== undefined) {
+								myPlayer.src("vid/"+matchMetadataConsumer.videoPath);
+								console.log("vid/"+matchMetadataConsumer.videoPath);
+								clearInterval(videoSelectionInterval);
+							}
+						});
+					}, 500);
+
+					if(Config.BLUR_VIDEO) {
+						// https://gist.github.com/CodeMyUI/d7b76cad430653b528f2
+						$("#video").css("-webkit-filter", " blur("+Config.BLUR_FACTOR+"px)");
+					}
+				}
+			}, 500);
+
+
+			// === Change to the first match if no match is specified with ?matchId yet ===
+			// http://stackoverflow.com/questions/5448545/how-to-retrieve-get-parameters-from-javascript/21210643#21210643
+			queryDict = {};
+			location.search.substr(1).split("&").forEach(function (item) {
+				queryDict[item.split("=")[0]] = item.split("=")[1]
+			});
+			if (queryDict.matchId === undefined) {
+				setInterval(function () {
+					var first = $('#match-selection-dropdown').first().text();
+					if (first !== "") {
+						var firstParts = first.split(" ");
+						var newMatchId = firstParts[0];
+						userInteraction.loadMatch(newMatchId);
+					}
+				}, 2000);
+			}
+
+			// === EventNotifier initialization ===
+			eventNotifier = new EventNotifier();
+
+			// === StatisticsAndGraphs initialization ===
+			statisticsAndGraphs = new StatisticsAndGraphs();
+			statisticsAndGraphs.initializeGraphs();
+			statisticsAndGraphs.startStatisticsContainerUpdater();
+
+			// === Start special consumers (except for MatchMetadataConsumer, MatchTimeProgressEventConsumer, and HeatmapStatisticsConsumer which are started after a timeout) ===
+			fieldObjectStateConsumer = new FieldObjectStateConsumer();
+			fieldObjectStateConsumer.startConsumption();
+			dribblingEventConsumer = new DribblingEventConsumer();
+			dribblingEventConsumer.startConsumption();
+			offsideLineStateConsumer = new OffsideLineStateConsumer();
+			offsideLineStateConsumer.startConsumption();
+			pressingStateConsumer = new PressingStateConsumer();
+			pressingStateConsumer.startConsumption();
+			teamAreaStateConsumer = new TeamAreaStateConsumer();
+			teamAreaStateConsumer.startConsumption();
+
+			// === Start event consumers ===
+			ballPossessionChangeEventConsumer = new BallPossessionChangeEventConsumer();
+			ballPossessionChangeEventConsumer.startConsumption();
+			duelEventConsumer = new DuelEventConsumer();
+			duelEventConsumer.startConsumption();
+			underPressureEventConsumer = new UnderPressureEventConsumer();
+			underPressureEventConsumer.startConsumption();
+			successfulPassEventConsumer = new SuccessfulPassEventConsumer();
+			successfulPassEventConsumer.startConsumption();
+			interceptionEventConsumer = new InterceptionEventConsumer();
+			interceptionEventConsumer.startConsumption();
+			missplacedPassEventConsumer = new MisplacedPassEventConsumer();
+			missplacedPassEventConsumer.startConsumption();
+			clearanceEventConsumer = new ClearanceEventConsumer();
+			clearanceEventConsumer.startConsumption();
+			doublePassEventConsumer = new DoublePassEventConsumer();
+			doublePassEventConsumer.startConsumption();
+			passSequenceEventConsumer = new PassSequenceEventConsumer();
+			passSequenceEventConsumer.startConsumption();
+			shotOffTargetEventConsumer = new ShotOffTargetEventConsumer();
+			shotOffTargetEventConsumer.startConsumption();
+			goalEventConsumer = new GoalEventConsumer();
+			goalEventConsumer.startConsumption();
+			freekickEventConsumer = new FreekickEventConsumer();
+			freekickEventConsumer.startConsumption();
+			goalkickEventConsumer = new GoalkickEventConsumer();
+			goalkickEventConsumer.startConsumption();
+			cornerkickEventConsumer = new CornerkickEventConsumer();
+			cornerkickEventConsumer.startConsumption();
+			throwinEventConsumer = new ThrowinEventConsumer();
+			throwinEventConsumer.startConsumption();
+			penaltyEventConsumer = new PenaltyEventConsumer();
+			penaltyEventConsumer.startConsumption();
+			kickoffEventConsumer = new KickoffEventConsumer();
+			kickoffEventConsumer.startConsumption();
+
+			// === Start statistics consumers ===
+			passStatisticsConsumer = new PassStatisticsConsumer();
+			passStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			passSequenceStatisticsConsumer = new PassSequenceStatisticsConsumer();
+			passSequenceStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			shotStatisticsConsumer = new ShotStatisticsConsumer();
+			shotStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			setPlayStatisticsConsumer = new SetPlayStatisticsConsumer();
+			setPlayStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			ballPossessionStatisticsConsumer = new BallPossessionStatisticsConsumer();
+			ballPossessionStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			distanceStatisticsConsumer = new DistanceStatisticsConsumer();
+			distanceStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			speedLevelStatisticsConsumer = new SpeedLevelStatisticsConsumer();
+			speedLevelStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+			dribblingStatisticsConsumer = new DribblingStatisticsConsumer();
+			dribblingStatisticsConsumer.startConsumption(Config.STATISTICS_FIRST_CONSUMPTION_LIMIT);
+		});
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/tooltipster@4.2.7/dist/css/tooltipster.bundle.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/tooltipster-follower@0.1.5/dist/css/tooltipster-follower.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.selectbox/1.2.0/jquery.selectBox.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/video.js@5.18.4/dist/video-js.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+
+<body>
+<header>
+	<ul class="sidebar sidebar-left">
+		<li class="sidebar-title">Select Match</li>
+		<li class="sidebar-select">
+			<select name="matches" id="match-selection-dropdown"></select>
+		</li>
+		<li class="sidebar-title">Show Events</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-goal-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-goal-checkbox" checked>Goal
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-shotOffTarget-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-shotOffTarget-checkbox" checked>Shot off Target
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-successfulPass-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-successfulPass-checkbox">Successful Pass
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-interception-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-interception-checkbox" checked>Interception
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-misplacedPass-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-misplacedPass-checkbox" checked>Misplaced Pass
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-clearance-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-clearance-checkbox" checked>Clearance
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-doublePass-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-doublePass-checkbox">Double Pass
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-passSequence-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-passSequence-checkbox" checked>Pass Sequence
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-penalty-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-penalty-checkbox" checked>Penalty
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-freekick-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-freekick-checkbox" checked>Free Kick
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-cornerkick-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-cornerkick-checkbox" checked>Corner Kick
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-goalkick-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-goalkick-checkbox" checked>Goal Kick
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-throwin-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-throwin-checkbox" checked>Throwin
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="showEvents-kickoff-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="showEvents-kickoff-checkbox" checked>Kickoff
+			</label>
+		</li>
+		<li class="sidebar-title">Visualize</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-playerLabels-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-playerLabels-checkbox">Player Labels
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-ballPossession-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-ballPossession-checkbox" checked>Ball Possession
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-duel-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-duel-checkbox" checked>Duel
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-underPressure-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-underPressure-checkbox" checked>Under Pressure
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-virtualOffside-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-virtualOffside-checkbox">Virtual Offside
+			</label>
+		</li>
+		<li class="sidebar-checkbox">
+			<label for="visualize-dribbling-checkbox" class="sidebar-checkbox-label">
+				<input type="checkbox" id="visualize-dribbling-checkbox" checked>Dribbling
+			</label>
+		</li>
+	</ul>
+	<ul class="sidebar sidebar-right">
+		<li class="sidebar-title">Statistics & Graphs</li>
+		<li class="statistics-selection-submenu" id="statistics-selection-submenuA">Team A</li>
+		<ul>
+			<li class="statistics-selection-item" id="statistics-selection-A">All Players</li>
+			<li class="statistics-selection-item" id="statistics-selection-A1">A1</li>
+			<li class="statistics-selection-item" id="statistics-selection-A2">A2</li>
+			<li class="statistics-selection-item" id="statistics-selection-A3">A3</li>
+			<li class="statistics-selection-item" id="statistics-selection-A4">A4</li>
+			<li class="statistics-selection-item" id="statistics-selection-A5">A5</li>
+			<li class="statistics-selection-item" id="statistics-selection-A6">A6</li>
+			<li class="statistics-selection-item" id="statistics-selection-A7">A7</li>
+			<li class="statistics-selection-item" id="statistics-selection-A8">A8</li>
+			<li class="statistics-selection-item" id="statistics-selection-A9">A9</li>
+			<li class="statistics-selection-item" id="statistics-selection-A10">A10</li>
+			<li class="statistics-selection-item" id="statistics-selection-A11">A11</li>
+		</ul>
+		<li class="statistics-selection-submenu" id="statistics-selection-submenuB">Team B</li>
+		<ul>
+			<li class="statistics-selection-item" id="statistics-selection-B">All Players</li>
+			<li class="statistics-selection-item" id="statistics-selection-B1">B1</li>
+			<li class="statistics-selection-item" id="statistics-selection-B2">B2</li>
+			<li class="statistics-selection-item" id="statistics-selection-B3">B3</li>
+			<li class="statistics-selection-item" id="statistics-selection-B4">B4</li>
+			<li class="statistics-selection-item" id="statistics-selection-B5">B5</li>
+			<li class="statistics-selection-item" id="statistics-selection-B6">B6</li>
+			<li class="statistics-selection-item" id="statistics-selection-B7">B7</li>
+			<li class="statistics-selection-item" id="statistics-selection-B8">B8</li>
+			<li class="statistics-selection-item" id="statistics-selection-B9">B9</li>
+			<li class="statistics-selection-item" id="statistics-selection-B10">B10</li>
+			<li class="statistics-selection-item" id="statistics-selection-B11">B11</li>
+		</ul>
+		<li class="statistics-selection-item" id="statistics-selection-comparison">Team Comparison</li>
+		<li class="statistics-selection-item" id="statistics-selection-graphs">Graphs</li>
+		<li class="sidebar-title">Heatmaps</li>
+		<li class="heatmaps-selection-submenu" id="heatmaps-selection-submenuA">Team A</li>
+		<ul>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A">All Players</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A1">A1</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A2">A2</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A3">A3</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A4">A4</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A5">A5</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A6">A6</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A7">A7</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A8">A8</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A9">A9</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A10">A10</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-A11">A11</li>
+		</ul>
+		<li class="heatmaps-selection-submenu" id="heatmaps-selection-submenuB">Team B</li>
+		<ul>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B">All Players</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B1">B1</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B2">B2</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B3">B3</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B4">B4</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B5">B5</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B6">B6</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B7">B7</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B8">B8</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B9">B9</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B10">B10</li>
+			<li class="heatmaps-selection-item" id="heatmaps-selection-B11">B11</li>
+		</ul>
+		<li class="sidebar-title">Visualize Team</li>
+		<li class="visualizeTeam-singleRoleVisualization-selection-submenu" id="visualizeTeam-singleRoleVisualization-selection-submenuA" >Team A</li>
+		<ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-A">All Players</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-goal-A">Goal</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-field-A">Field</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-defence-A">Defence</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-defence-inner-A">Inner</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-defence-outer-A">Outer</li>
+			</ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-midfield-A">Midfield</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-midfield-defensive-A">
+					Defensive
+				</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-midfield-offensive-A">
+					Offensive
+				</li>
+			</ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-offence-A">Offence</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-offence-inner-A">Inner</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-offence-outer-A">Outer</li>
+			</ul>
+		</ul>
+		<li id="visualizeTeam-singleRoleVisualization-selection-submenuB" class="visualizeTeam-singleRoleVisualization-selection-submenu">Team B</li>
+		<ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-B">All Players</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-goal-B">Goal</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level1" id="role-player-field-B">Field</li>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-defence-B">Defence</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-defence-inner-B">Inner</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-defence-outer-B">Outer</li>
+			</ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-midfield-B">Midfield</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-midfield-defensive-B">
+					Defensive
+				</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-midfield-offensive-B">
+					Offensive
+				</li>
+			</ul>
+			<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level2" id="role-player-field-offence-B">Offence</li>
+			<ul>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-offence-inner-B">Inner</li>
+				<li class="visualizeTeam-singleRoleVisualization-selection-item visualizeTeam-singleRoleVisualization-selection-level3" id="role-player-field-offence-outer-B">Outer</li>
+			</ul>
+		</ul>
+		<li id="visualizeTeam-multipleRoleVisualization-menuItem">Multiple Role Visualization</li>
+		<li id="visualizeTeam-roleAssignment-menuItem">Assign Roles</li>
+		<li id="visualizeTeam-clearVisualization-menuItem">Clear Visualization</li>
+		<li class="sidebar-title">Custom Selections</li>
+		<li id="visualizeTeam-customVisualization-menuItem">Create Custom Selection</li>
+	</ul>
+</header>
+<div id="above-field-info">
+	<span id="above-field-info-left"></span>
+	<p><span id="above-field-info-time">00:00</span> <span id="above-field-info-paused">(Paused)</span></p>
+	<span id="above-field-info-right"><span id="above-field-info-right-pressingIndex"></span><br><span id="above-field-info-right-duel"></span></span>
+</div>
+<div id="field-toggle-button-wrapper">
+	<div id="field-toggle-button">Video</div>
+</div>
+<div id="video-privacy-info-wrapper">
+	<div id="video-privacy-info">The video is blurred for privacy reasons.</div>
+</div>
+<div id="field-wrapper">
+	<div id="field-withBorder"></div>
+	<div id="field-inner">
+		<svg id="field-inner-svg"></svg>
+	</div>
+
+	<div class="container" id="below-field-customSelection-info">
+		<div class="container-title"> Create Custom Selection </div>
+		<div class="container-body">
+			<span>Players:</span>
+			<span id="below-field-customSelection-info-players"></span>
+			<button id="below-field-customSelection-info-cancel">Cancel</button>
+			<button id="below-field-customSelection-info-save">Save</button>
+			<input id="below-field-customSelection-info-name" placeholder="Name">
+			<div style="clear:both"></div>
+		</div>
+	</div>
+
+	<div class="container" id="below-field-roleAssignment-info">
+		<div class="container-title"> Role Assignment </div>
+		<div class="container-body">
+			<span>Role:</span>
+			<span id="below-field-roleAssignment-info-role"></span>
+			<button id="below-field-roleAssignment-info-done">Done</button>
+			<div style="clear:both"></div>
+		</div>
+	</div>
+
+	<div class="container" id="below-field-heatmaps-info">
+		<div class="container-title"> Heatmap <span id="below-field-heatmaps-info-title-suffix"></span></div>
+		<div class="container-body">
+			<button id="below-field-heatmaps-info-remove">Close Heatmap</button>
+			<p>Granularity:<input id="below-field-heatmaps-info-range" type="range"></p>
+			<p>Heatmap Interval:
+				<label><input class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='0-TOFILL'> Full Game </label>
+				<label><input class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='1200-TOFILL'> 20 min </label>
+				<label><input class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='600-TOFILL'> 10 min </label>
+				<label><input  class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='300-TOFILL'> 5 min </label>
+				<label><input class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='60-TOFILL'> 1 min </label>
+				<label><input class='below-field-heatmaps-info-interval-selection-item' type='radio' name='below-field-heatmaps-info-interval-selection-item' value='10-TOFILL'> 10 sec </label>
+			</p>
+			<p>Update Interval: <select name="test" id="below-field-heatmaps-info-updateInterval-dropdown"></select></p>
+		</div>
+	</div>
+</div>
+
+<video id="video" class="video-js vjs-default-skin" muted preload="auto">
+	<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+</video>
+
+<div class="container">
+	<div class="container-title"> Event Notifier </div>
+	<div class="container-body" id="eventNotifier-container-body">
+		<div id="eventNotifier-container-text"></div>
+		<button id="eventNotifier-container-log-button">Show Log</button>
+		<div id="eventNotifier-container-log-text"></div>
+	</div>
+</div>
+
+<div class="container" id="statistics-container">
+	<div class="container-title"><span id="statistics-container-title"></span>
+		<div id="statistics-container-close-button"></div>
+	</div>
+	<div id="statistics-container-singleColumn" class="statistics-container-body">
+		<div class="statistics-container-subtitle"> Ball Possession </div>
+		<div id="statistics-container-singleColumn-ballPossessionStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Goals and Shots </div>
+		<div id="statistics-container-singleColumn-shotNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Set Plays </div>
+		<div id="statistics-container-singleColumn-setPlayNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Pass Sequences </div>
+		<div id="statistics-container-singleColumn-passSequenceNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Average Pass Sequence Length </div>
+		<div id="statistics-container-singleColumn-passSequenceAvgLengthStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Maxmimal Pass Sequence Length </div>
+		<div id="statistics-container-singleColumn-passSequenceMaxLengthStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Double Passes </div>
+		<div id="statistics-container-singleColumn-doublePassNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Passes </div>
+		<div id="statistics-container-singleColumn-passNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Pass Success Rate </div>
+		<div id="statistics-container-singleColumn-passSuccessStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Average Packing </div>
+		<div id="statistics-container-singleColumn-packingStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Pass Directions </div>
+		<div id="statistics-container-singleColumn-passDirectionStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Distance </div>
+		<div id="statistics-container-singleColumn-distanceStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Speed </div>
+		<div id="statistics-container-singleColumn-speedStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Number of Dribblings </div>
+		<div id="statistics-container-singleColumn-dribblingNumStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Average Dribbling Duration </div>
+		<div id="statistics-container-singleColumn-avgDribblingDurationStatistics" class="statistics-container-fullChart"></div>
+
+		<div class="statistics-container-subtitle"> Average Dribbling Distance </div>
+		<div id="statistics-container-singleColumn-avgDribblingLengthStatistics" class="statistics-container-fullChart"></div>
+	</div>
+	<div id="statistics-container-doubleColumn" class="statistics-container-body">
+		<div class="statistics-container-subtitle"> Ball Possession </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-ballPossessionStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-ballPossessionStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Goals and Shots </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-shotNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-shotNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Set Plays </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-setPlayNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-setPlayNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Pass Sequences </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passSequenceNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passSequenceNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Average Pass Sequence Length </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passSequenceAvgLengthStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passSequenceAvgLengthStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Maxmimal Pass Sequence Length </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passSequenceMaxLengthStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passSequenceMaxLengthStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Double Passes </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-doublePassNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-doublePassNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Passes </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Pass Success Rate </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passSuccessStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passSuccessStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Average Packing </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-packingStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-packingStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Pass Directions </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-passDirectionStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-passDirectionStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Distance </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-distanceStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-distanceStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Speed </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-speedStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-speedStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Number of Dribblings </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-dribblingNumStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-dribblingNumStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Average Dribbling Duration </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-avgDribblingDurationStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-avgDribblingDurationStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+
+		<div class="statistics-container-subtitle"> Average Dribbling Distance </div>
+		<div class="statistics-container-doubleColumn-leftColumn-title"> Team A </div>
+		<div class="statistics-container-doubleColumn-rightColumn-title"> Team B </div>
+		<div id="statistics-container-doubleColumn-leftColumn-avgDribblingLengthStatistics" class="statistics-container-halfChart-left"></div>
+		<div id="statistics-container-doubleColumn-rightColumn-avgDribblingLengthStatistics" class="statistics-container-halfChart-right"></div>
+		<div style="clear:both"></div>
+	</div>
+	<div id="statistics-container-graphs" class="statistics-container-body">
+		<div class="statistics-container-subtitle"> Pressing Index </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-pressingIndex"></canvas></div>
+		<div class="statistics-container-subtitle"> Surface of the Minimum Bounding Rectangle around <span class="statistics-container-subtitle-teamA">Team A</span> (in m<sup>2</sup>) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-mbrSurface-A"></canvas></div>
+		<div class="statistics-container-subtitle"> Surface of the Minimum Bounding Rectangle around <span class="statistics-container-subtitle-teamB">Team B</span> (in m<sup>2</sup>) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-mbrSurface-B"></canvas></div>
+		<div class="statistics-container-subtitle"> Surface of the Planar Convex Hull around <span class="statistics-container-subtitle-teamA">Team A</span> (in m<sup>2</sup>) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-pchSurface-A"></canvas></div>
+		<div class="statistics-container-subtitle"> Surface of the Planar Convex Hull around <span class="statistics-container-subtitle-teamB">Team B</span> (in m<sup>2</sup>) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-pchSurface-B"></canvas></div>
+		<div class="statistics-container-subtitle"> Ball Z Position (in m) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-ballZPosition"></canvas></div>
+		<div class="statistics-container-subtitle"> Ball Absolute Velocity (in km/h) </div>
+		<div class="statistics-container-graphChart"><canvas id="statistics-container-graphs-ballAbsVelocity"></canvas></div>
+	</div>
+</div>
+
+<div id="footer">
+	<button id="footer-credits-button">Show Credits</button>
+	<button id="footer-video-button">Show Fullscreen Video</button>
+	<button id="footer-pause-button">Pause</button>
+</div>
+
+<div id="modal">
+	<div id="modal-window">
+		<div id="modal-header">
+		</div>
+		<div id="modal-body">
+		</div>
+		<div id="modal-footer">
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

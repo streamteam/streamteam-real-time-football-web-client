@@ -1,0 +1,898 @@
+/*
+ * StreamTeam
+ * Copyright (C) 2019  University of Basel
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+body{
+	background: #353E45;
+	margin:0;
+	font-family: sans-serif;
+	color: #e0e0e0;
+	font-size:14px;
+	cursor: default;
+}
+
+body::-webkit-scrollbar {
+	display: none;
+}
+
+a{
+	text-decoration:none;
+	color: #e0e0e0;
+	outline: 0;
+}
+
+.button, button{
+	color: #e0e0e0;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border: 1px solid #1d2126;
+	padding:8px 20px;
+	box-shadow: 0 0 2px #000;
+	font-size:14px;
+	cursor: pointer;
+}
+
+.button:hover, button:hover{
+	box-shadow: inset 0 0 1px #000;
+	background: #252B33;
+}
+
+.selectBox-dropdown, .selectBox-dropdown:focus {
+	color: #e0e0e0;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border: 1px solid #1d2126;
+	box-shadow: 0 0 2px #000;
+	line-height:1;
+	cursor:pointer;
+}
+
+.selectBox-dropdown-menu {
+	border: 1px solid #1d2126;
+	box-shadow: 0 0 2px #000;
+}
+
+.selectBox-label {
+	padding: 8px !important;
+}
+
+.selectBox-arrow {
+	border-left: 1px solid #1d2126 !important;
+	background: url(../img/selectBoxArrow.gif) 50% center no-repeat !important;
+}
+
+.selectBox-options>LI>A{
+	background: #12161A;
+	border-bottom: 1px solid #323942;
+	cursor: pointer;
+}
+
+.selectBox-options>LI:last-of-type>A{
+	border-bottom: none;
+}
+
+.selectBox-options>LI.selectBox-hover>A, .selectBox-options>LI.selectBox-selected>A {
+	background: #CC9331;
+}
+
+ul{
+	list-style-type:none;
+}
+
+/*============================================================
+====== Modals                                              ===
+============================================================*/
+
+#modal {
+	background: rgba(0,0,0,0.5);
+	display: none;
+	position: fixed;
+	left:0;
+	height: 100%;
+	width: 100%;
+	z-index: 9999;
+	top: 0;
+}
+
+#modal-window {
+	border-radius: 5px;
+	box-shadow:0 0 15px #000;
+	width: 450px;
+	margin: 200px auto;
+}
+
+#modal-header{
+	border-color: #1B1F25;
+	width:100%;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border-bottom: 1px solid #B18334;
+	text-align:center;
+	font-size: 15px;
+	font-weight: normal;
+	line-height:40px;
+}
+
+#modal-body{
+	padding:0;
+	min-height:55px;
+	background-color: #293038;
+}
+
+#modal-footer{
+	background-color: #293038;
+	padding:0;
+	min-height:25px;
+}
+
+#modal span{
+	margin-top:10px;
+	padding: 3px;
+}
+
+#modal-close-button{
+	float:right;
+	margin-top:14px !important;
+	margin-right:10px;
+	width:13px;
+	height:13px;
+	background: url('../img/x.gif');
+}
+
+#modal-close-button:hover{
+	cursor:pointer;
+}
+
+#modal-cancel-button {
+	margin: 5px 10px 5px 10px;
+}
+
+/*============================================================
+====== Player Modal                               ===
+============================================================*/
+
+#playerModal-heatmaps-button{
+	float:left;
+	margin:10px 10px 0 10px;
+}
+
+#playerModal-statistics-button{
+	float:right;
+	margin:10px 10px 0 10px;
+}
+
+/*============================================================
+====== Role Assignment Modal                               ===
+============================================================*/
+
+#visualizeTeam-roleAssignment-selection-list{
+	width:100%;
+	height:100%;
+}
+
+.visualizeTeam-roleAssignment-selection-level2-list{
+	padding:0;
+	margin:0;
+}
+
+.visualizeTeam-roleAssignment-selection-level3-list{
+	padding:0;
+	margin:0;
+	display:none;
+}
+
+.visualizeTeam-roleAssignment-selection-item{
+	cursor: pointer;
+	padding: 8px 20px;
+	border-bottom: 1px solid #323942;
+}
+
+.visualizeTeam-roleAssignment-selection-item:hover, .visualizeTeam-roleAssignment-selection-item.active{
+	border-right: 3px solid #CC9331;
+	background-color: #282E36;
+}
+
+.visualizeTeam-roleAssignment-selection-level1{
+	background: #1D2227;
+}
+
+.visualizeTeam-roleAssignment-selection-level2{
+	background: #1D2227;
+	padding-left:35px;
+}
+
+.visualizeTeam-roleAssignment-selection-level3{
+	padding-left:50px;
+	background: #12161A;
+	border-bottom: 1px solid #000;
+}
+
+.visualizeTeam-roleAssignment-selection-field{
+	margin-top: 0;
+	margin-bottom: 0;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border-bottom:1px solid #504129;
+	text-align: left;
+	padding: 8px 20px;
+	font-weight: 200;
+	line-height: 20px;
+}
+
+#visualizeTeam-roleAssignment-selectPlayers-button {
+	margin: 0;
+	display: block;
+	box-shadow: none;
+	text-align: center;
+	cursor: pointer;
+	border-top:none;
+}
+
+/*============================================================
+====== Visualization Modals                                ===
+============================================================*/
+
+.visualizeTeam-singleRoleVisualization-draw-button, .visualizeTeam-multipleRoleVisualization-draw-button, .visualizeTeam-customVisualization-draw-button {
+	width: 24%;
+	display: inline-block;
+	text-align:center;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-list{
+	display:block;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-list-left {
+	float: left;
+	width: 49.8%;
+	border-right: 1px solid #12161A ;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-list-right{
+	float: right;
+	width: 49.9%;
+	border-left:0;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-list label{
+	cursor: pointer;
+	border-bottom: 1px solid #323942;
+	background: #1D2227;
+	display: block;
+	margin: 0 !important;
+	padding: 7px 10px;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-header{
+	cursor: default;
+	background: linear-gradient(to bottom,#293038 0,#252B33 100%);
+	display: block;
+	margin: 0 !important;
+	padding: 5px 10px !important;
+	text-align:center;
+	font-weight:bold;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-item{
+	margin-right: 5px;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-level2{
+	padding-left: 20px !important;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-level3{
+	padding-left: 40px !important;
+	background: #12161A !important;
+	border-bottom: 1px solid #000 !important;
+}
+
+.visualizeTeam-multipleRoleVisualization-selection-level1:hover, .visualizeTeam-multipleRoleVisualization-selection-level2:hover, .visualizeTeam-multipleRoleVisualization-selection-level3:hover {
+	background: #282E36 !important;
+}
+
+/*============================================================
+====== Heatmaps Modal                   ===
+============================================================*/
+
+#heatmaps-modal-confirm-button{
+	float:right;
+	margin: -15px 10px 5px 10px;
+}
+
+/*============================================================
+====== Above Field Info                                    ===
+============================================================*/
+
+#above-field-info{
+	position: relative;
+	z-index: 10;
+	text-align: center;
+	height: 40px;
+	margin: 0 auto 5px auto;
+	padding-top: 20px;
+	font-size: 16px;
+	text-shadow: 0 0 2px #000;
+}
+
+#above-field-info p{
+	margin:0 auto;
+	width:80px;
+	height:36px;
+	border-radius:5px 5px 0 0;
+}
+
+#above-field-info-paused{
+	display:none;
+}
+
+#above-field-info-left{
+	float:left;
+	margin-top:0;
+	width: 250px;
+	text-align: left;
+}
+
+#above-field-info-right{
+	float: right;
+	margin-top: -36px;
+	width: 250px;
+	text-align: right;
+}
+
+/*============================================================
+====== Field                                               ===
+============================================================*/
+
+#field-toggle-button-wrapper {
+	position:relative;
+	height:26px;
+	margin: 0 auto -26px auto;
+	z-index:10;
+	pointer-events: none;
+}
+
+#field-toggle-button {
+	height:18px;
+	width:40px;
+	float:right;
+	padding: 3px 6px;
+	border-radius: 3px;
+	z-index:10;
+	margin-bottom: -26px;
+	background: #293038;
+	border: 1px solid #1d2126;
+	box-shadow: 0 0 2px #000;
+	cursor:pointer;
+	pointer-events: auto;
+	text-align:center;
+}
+
+#video-privacy-info-wrapper {
+	position:relative;
+	height:300px;
+	margin: 0 auto -300px auto;
+	z-index:10;
+	pointer-events: none;
+	display:none;
+}
+
+#video-privacy-info {
+	color: #e0e0e0;
+	font-size: 22px;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px #000;
+	text-align:center;
+	height:60px;
+	margin-bottom: -60px;
+	position:absolute;
+	bottom: 0;
+}
+
+#field-toggle-button:hover{
+	background-color:#252B33;
+	cursor:pointer;
+	box-shadow: inset 0 0 1px #000;
+}
+
+#field-wrapper {
+	margin: 0 auto;
+}
+
+#field-withBorder{
+	position: relative;
+	z-index:1;
+	margin:0 auto;
+	box-shadow: 0 0 15px #000;
+	background: #80B280 url('../img/field.jpg');
+}
+
+#field-inner{
+	position:relative;
+	z-index:2;
+	margin: 0 auto;
+}
+
+#field-inner-svg{
+	overflow:visible;
+	position:relative;
+	z-index:2;
+	padding: 0;
+}
+
+.player:hover{
+	cursor:pointer;
+}
+
+.object_cross {
+	pointer-events: none;
+	display: none;
+}
+
+.object_rect {
+	pointer-events: none;
+	display: none;
+}
+
+/*============================================================
+====== Video                                               ===
+============================================================*/
+
+#video {
+	margin: 0 auto;
+	box-shadow: 0 0 15px #000;
+	display: none;
+}
+
+/*============================================================
+====== Container                                           ===
+============================================================*/
+
+.container{
+	background: #e0e0e0;
+	box-shadow: 0 0 10px #000;
+	margin:20px auto 20px auto;
+	overflow:visible;
+}
+
+.container-title {
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border-bottom: 1px solid #B18334;
+	text-align:center;
+	font-size: 15px;
+	font-weight: normal;
+	line-height:40px;
+}
+
+.container-body{
+	padding:5px 8px;
+	background: #363f46;
+	overflow-y:auto;
+}
+
+/*============================================================
+====== Below Field Info                                    ===
+============================================================*/
+
+#below-field-heatmaps-info {
+	display: none;
+}
+
+#below-field-heatmaps-info-range{
+	width:300px;
+	height:10px;
+	cursor:pointer;
+	margin-left: 5px;
+}
+
+#below-field-heatmaps-info-updateInterval-dropdown{
+	width:150px;
+}
+
+#below-field-customSelection-info-cancel, #below-field-customSelection-info-save {
+	float:right;
+	margin-left:10px;
+}
+
+#below-field-heatmaps-info-remove, #below-field-roleAssignment-info-done{
+	float:right;
+	margin:0;
+}
+
+#below-field-customSelection-info-name {
+	float:right;
+	margin:0;
+	font-size:14px;
+	font-family: sans-serif;
+	color: #e0e0e0;
+	padding:8px 20px;
+	width:200px;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border: 1px solid #1d2126;
+	box-shadow: 0 0 2px #000;
+}
+
+
+
+#below-field-customSelection-info{
+	display:none;
+}
+
+#below-field-roleAssignment-info{
+	display:none;
+}
+
+/*============================================================
+====== Event Notifier                                      ===
+============================================================*/
+
+#eventNotifier-container-body{
+	text-align:center;
+	padding:0;
+}
+
+#eventNotifier-container-text {
+	font-size: 22px;
+	height:60px;
+	font-weight: bold;
+	margin: 0;
+	text-shadow: 1px 1px 2px #000;
+	padding: 3px 0;
+}
+
+#eventNotifier-container-log-button {
+	float:right;
+	margin:0;
+	margin-right:8px;
+	margin-top:-60px;
+}
+
+#eventNotifier-container-log-text {
+	width:100%;
+	height:500px;
+	overflow:scroll;
+	white-space: nowrap;
+	text-align:left;
+	display:none;
+}
+
+#eventNotifier-container-log-text::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+#eventNotifier-container-log-text::-webkit-scrollbar-track, #eventNotifier-container-log-text::-webkit-scrollbar-corner {
+	background: #2e353d;
+}
+
+#eventNotifier-container-log-text::-webkit-scrollbar-thumb {
+	background: #252B33;
+}
+
+/*============================================================
+====== Footer                                              ===
+============================================================*/
+
+#footer{
+	margin: 20px auto 5px auto;
+	padding:0;
+}
+
+#footer button {
+	margin-right: 10px;
+}
+
+/*============================================================
+====== Navigation                                          ===
+============================================================*/
+
+.sidebar{
+	width:300px;
+	height:100%;
+	margin-top:0;
+	-webkit-padding-start: 0;
+	background-color: #2e353d;
+	box-shadow:0 0 2px #000;
+	position:fixed;
+	z-index:1;
+	padding-left:0;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+
+.sidebar::-webkit-scrollbar {
+	width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-corner {
+	background: #282E36;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+	background: #424D5B;/*#1D2227;*/
+}
+
+.sidebar-right{
+	right:0;
+}
+
+.sidebar-left{
+	margin-left:0;
+	direction: rtl;
+	text-align: left;
+}
+
+.sidebar-left>* {
+	direction: ltr;
+}
+
+.sidebar-title {
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border-bottom: 1px solid #B18334 !important;
+	text-align:center;
+	font-size: 15px;
+	font-weight: normal;
+	margin: 0;
+	border-right: none !important;
+	border-left: none !important;
+	cursor:default !important;
+}
+
+/* Entries in menu */
+.sidebar>li{
+	cursor: pointer;
+	padding: 10px 15px;
+	border-bottom:1px solid #252B32;
+	border-left: 0px;
+}
+
+.sidebar>li:hover, .sidebar>li.active{
+	border-right: 3px solid #CC9331;
+	background-color: #424D5B;
+}
+
+/* Submenus */
+.sidebar>ul{
+	padding-left:0;
+	display:none;
+	-webkit-padding-start: 0;
+}
+
+/* Entries in submenu */
+.sidebar>ul>li{
+	cursor: pointer;
+	background: #1D2227;
+	border-bottom: 1px solid #323942;
+	padding: 8px 20px;
+}
+
+.sidebar>ul>li:hover{
+	border-right: 3px solid #CC9331;
+	background-color: #282E36;
+}
+
+/* Subsubmenus */
+.sidebar>ul>ul{
+	display:block;
+}
+
+/* Entries in subsubmenu */
+.sidebar>ul>ul>li{
+	cursor: pointer;
+	border-bottom: 1px solid #323942;
+	padding: 8px 20px;
+	padding-left:50px;
+	background: #12161A;
+	border-bottom: 1px solid #000 !important;
+	margin-left:-40px;
+}
+
+.sidebar>ul>ul>li:hover{
+	border-right: 3px solid #CC9331;
+	background-color: #282E36;
+}
+
+#match-selection-dropdown {
+	width:270px !important;
+	height:34px;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border: 1px solid #1d2126;
+	box-shadow: 0 0 2px #000;
+}
+
+.sidebar-select:hover {
+	background-color: #2e353d !important;
+	border-right: none !important;
+	cursor:default;
+}
+
+.sidebar-checkbox {
+	padding:0 !important;
+}
+
+.sidebar-checkbox-label {
+	display:block;
+	padding: 10px 15px;
+	cursor: pointer;
+}
+
+.visualizeTeam-singleRoleVisualization-selection-level2 {
+	padding-left: 35px !important;
+}
+
+.visualizeTeam-singleRoleVisualization-selection-level1.active, .visualizeTeam-singleRoleVisualization-selection-level2.active, .visualizeTeam-singleRoleVisualization-selection-level3.active {
+	border-right: 3px solid #CC9331;
+	background-color: #282E36;
+}
+
+.visualizeTeam-customVisualization-selection-removeButton {
+	position: relative;
+	left:260px;
+	margin-top: -16px;
+	z-index: 999;
+	width:13px;
+	height:13px;
+	background: url('../img/x.gif');
+}
+
+/*============================================================
+====== Statistics                                          ===
+============================================================*/
+
+#statistics-container{
+	display:none;
+}
+
+#statistics-container-singleColumn{
+	display:none;
+}
+
+#statistics-container-doubleColumn{
+	display:none;
+	overflow:visible;
+}
+
+#statistics-container-close-button{
+	float:right;
+	margin-top:14px !important;
+	margin-right:10px;
+	width:13px;
+	height:13px;
+	background: url('../img/x.gif');
+}
+
+#statistics-container-close-button:hover{
+	 cursor:pointer;
+ }
+
+.statistics-container-halfChart-left {
+	margin:5px;
+	float:left;
+}
+
+.statistics-container-halfChart-right{
+	margin:5px;
+	margin-right:-4px;
+	float:right;
+}
+
+.statistics-container-fullChart {
+	margin: 5px;
+}
+
+.statistics-container-graphChart {
+	width:100%;
+	height:300px;
+	margin-top:7px;
+}
+
+.statistics-container-subtitle {
+	font-size: 22px;
+	font-weight: bold;
+	margin: 0;
+	margin-top: 15px;
+	border-bottom: 2px solid #D19B3D;
+	text-shadow: 1px 1px 2px #000;
+	padding: 3px 0;
+}
+
+.statistics-container-subtitle:first-of-type {
+	margin-top: 0;
+}
+
+.statistics-container-doubleColumn-leftColumn-title{
+	float:left;
+	width:50%;
+	font-size: 16px;
+	font-weight:bold;
+	border-bottom: 1px solid #D19B3D;
+	text-shadow: 1px 1px 2px #000;
+	padding: 3px 0;
+	margin: 0 0 5px 0;
+}
+
+.statistics-container-doubleColumn-rightColumn-title{
+	width:50%;
+	float:right;
+	font-size: 16px;
+	font-weight:bold;
+	border-bottom: 1px solid #D19B3D;
+	text-shadow: 1px 1px 2px #000;
+	padding: 3px 0;
+	margin: 0 0 5px 0;
+}
+
+.statistics-container-body{
+	padding:5px 8px;
+	background: #363f46;
+	overflow-y: auto;
+}
+
+.statistics-item {
+	margin-bottom:5px;
+}
+
+.statistics-item:last-of-type{
+	margin-bottom:0;
+}
+
+.statistics-item-label {
+	float:left;
+	margin: 0;
+	font-size: 12px;
+	width:40px;
+}
+
+.statistics-item-bar{
+	float:left;
+	padding: 2px 0;
+	font-size: 12px;
+	white-space: nowrap;
+	overflow:hidden;
+}
+
+.statistics-item-bar:first-of-type {
+	margin-left: 5px;
+}
+
+.tooltipster-follower.tooltipster-default.tooltipster-default-customized .tooltipster-box {
+	background-color: #293038;
+	border: none;
+	border-radius: 5px;
+	box-shadow:0 0 5px #000;
+}
+
+.tooltipster-follower.tooltipster-default.tooltipster-default-customized .tooltipster-content {
+	color: #e0e0e0;
+	padding: 0;
+}
+
+.tooltip-header {
+	border-color: #1B1F25;
+	width:100%;
+	background: linear-gradient(to bottom, #293038 0, #252B33 100%);
+	border-bottom: 1px solid #B18334;
+	text-align:center;
+}
+
+.tooltip-header-text {
+	padding-left:10px;
+	padding-right:10px;
+	font-size: 15px;
+	font-weight: normal;
+	line-height:40px;
+}
+
+.tooltip-text {
+	padding:6px;
+	line-height:22px;
+}
