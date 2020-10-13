@@ -44,7 +44,7 @@ class PassSequenceEventConsumer extends AbstractAtomicEventConsumer {
 			var passes = [];
 			for (var i = 0; i < numPasses; i++) {
 				var kickPlayerId = passSequenceEventStreamElement.objectIdentifiers[i];
-				displayText = displayText + kickPlayerId + " -> ";
+				displayText = displayText + kickPlayerId + " &#10132; ";
 
 				var kickX = parseFloat(passSequenceEventStreamElement.positions[i*2].x);
 				var kickY = parseFloat(passSequenceEventStreamElement.positions[i*2].y);

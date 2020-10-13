@@ -62,6 +62,8 @@ class Resizer {
 
 		$('#video').css('width', Resizer.FIELD_WIDTH + 2*Config.FIELD_BORDER);
 		$('#video').css('height', Resizer.FIELD_HEIGHT + 2*Config.FIELD_BORDER);
+		$('#video_html5_api').css('width', "100%");
+		$('#video_html5_api').css('height', "100%");
 
 		$('.container').css('width', Resizer.FIELD_WIDTH + 2*Config.FIELD_BORDER);
 

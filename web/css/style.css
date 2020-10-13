@@ -29,6 +29,11 @@ body::-webkit-scrollbar {
 	display: none;
 }
 
+/** https://stackoverflow.com/questions/62057910/chrome-83-change-colors-of-new-form-styling/62184744#62184744 **/
+input[type='checkbox']:checked {-webkit-filter: grayscale(100%);}
+input[type='radio']:checked {-webkit-filter: grayscale(100%);}
+input[type='range'] {-webkit-filter: grayscale(100%);}
+
 a{
 	text-decoration:none;
 	color: #e0e0e0;

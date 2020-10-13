@@ -46,7 +46,7 @@ class DoublePassEventConsumer extends AbstractAtomicEventConsumer {
 				passes.push({"startX":kickX, "startY":kickY, "endX":receiveX, "endY":receiveY});
 			}
 
-			var displayText = "Double pass: " + doublePassEventStreamElement.objectIdentifiers[0] + " -> " + doublePassEventStreamElement.objectIdentifiers[1] + " -> " + doublePassEventStreamElement.objectIdentifiers[1];
+			var displayText = "Double pass: " + doublePassEventStreamElement.objectIdentifiers[0] + " &#10132; " + doublePassEventStreamElement.objectIdentifiers[1] + " &#10132; " + doublePassEventStreamElement.objectIdentifiers[0];
 
 			eventNotifier.log(displayText);
 
