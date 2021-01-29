@@ -83,7 +83,7 @@ class StatisticsAndGraphs {
 							time: {
 								unit: 'second',
 								displayFormats: {
-									second: 'hh:mm:ss'
+									second: 'mm:ss'
 								}
 							}
 						}],
@@ -114,24 +114,29 @@ class StatisticsAndGraphs {
 	 * Adds value to graph.
 	 * @param graphId Graph identifier
 	 * @param value Value
+	 * @param generationTimestamp Generation timestamp
 	 */
-	addValueToGraph(graphId, value) {
+	addValueToGraph(graphId, value, generationTimestamp) {
 		// based on https://www.chartjs.org/samples/latest/scales/time/line-point-data.html & https://www.youtube.com/watch?v=De-zusP8QVM
 
-		var date = new Date();
-		var chart = this.graphCharts.get(graphId);
+		if(matchMetadataConsumer.generationTimestampFirstDataStreamElementOfTheMatch === undefined) {
+			console.log("Cannot add value to graph since generationTimestampFirstDataStreamElementOfTheMatch is undefined.")
+		} else {
+			var date = new Date(generationTimestamp - matchMetadataConsumer.generationTimestampFirstDataStreamElementOfTheMatch);
+			var chart = this.graphCharts.get(graphId);
 
-		chart.data.datasets[0].data.push({
-			x: date,
-			y: value
-		});
+			chart.data.datasets[0].data.push({
+				x: date,
+				y: value
+			});
 
-		while(date.getTime() - chart.data.datasets[0].data[0].x.getTime() > Config.GRAPHS_HISTORY_IN_MS) {
-			chart.data.datasets[0].data.shift(); // remove first item of the array
-		}
+			while (date.getTime() - chart.data.datasets[0].data[0].x.getTime() > Config.GRAPHS_HISTORY_IN_MS) {
+				chart.data.datasets[0].data.shift(); // remove first item of the array
+			}
 
-		if(statisticsAndGraphs.showId === "graphs") {
-			chart.update();
+			if (statisticsAndGraphs.showId === "graphs") {
+				chart.update();
+			}
 		}
 	}
 

@@ -47,7 +47,9 @@ class PressingStateConsumer extends AbstractStreamConsumer {
 
 				$('#above-field-info-right-pressingIndex').html("Pressing Index: " + pressingIndex.toFixed(2));
 
-				statisticsAndGraphs.addValueToGraph("pressingIndex", pressingIndex);
+				var generationTimestamp = parseInt(pressingStateStreamElement.generationTimestamp);
+
+				statisticsAndGraphs.addValueToGraph("pressingIndex", pressingIndex, generationTimestamp);
 			}
 		}
 	}

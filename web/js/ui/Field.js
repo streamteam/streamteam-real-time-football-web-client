@@ -535,7 +535,7 @@ class Field {
 			var distLeft = Math.round(Math.sqrt((diffLeftX*diffLeftX)+(diffY*diffY))*decimalHelper)/decimalHelper;
 			var distRight = Math.round(Math.sqrt((diffRightX*diffRightX)+(diffY*diffY))*decimalHelper)/decimalHelper;
 
-			$('#above-field-info-left').html("Distance to left goal: " +  distLeft + " m <br> Distance to right goal: " + distRight + " m");
+			$('#above-field-info-left-distanceToGoal').html("Dist. to goal: " +  distLeft + " m left, " + distRight + " m right");
 		}
 	}
 

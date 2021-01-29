@@ -48,7 +48,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/protobufjs@6.10.1/dist/protobuf.min.js"></script>
 
 	<!-- StreamTeam Data Model -->
-	<script src="../streamteam-data-model/streamteam-data-model-lib-1.1.0.js"></script>
+	<script src="../streamteam-data-model/streamteam-data-model-lib-1.2.0.js"></script>
 
 	<!-- Configuration -->
 	<script src="js/Config.js"></script>
@@ -76,6 +76,7 @@
 	<script src="js/consumers/special/PressingStateConsumer.js"></script>
 	<script src="js/consumers/special/TeamAreaStateConsumer.js"></script>
 	<script src="js/consumers/special/HeatmapStatisticsConsumer.js"></script>
+	<script src="js/consumers/special/BallFieldSideStateConsumer.js"></script>
 
 	<!-- Atomic event consumers -->
 	<script src="js/consumers/atomicEvent/BallPossessionChangeEventConsumer.js"></script>
@@ -203,6 +204,8 @@
 			pressingStateConsumer.startConsumption();
 			teamAreaStateConsumer = new TeamAreaStateConsumer();
 			teamAreaStateConsumer.startConsumption();
+			ballFieldSideStateConsumer = new BallFieldSideStateConsumer();
+			ballFieldSideStateConsumer.startConsumption();
 
 			// === Start event consumers ===
 			ballPossessionChangeEventConsumer = new BallPossessionChangeEventConsumer();
@@ -502,7 +505,7 @@
 	</ul>
 </header>
 <div id="above-field-info">
-	<span id="above-field-info-left"></span>
+	<span id="above-field-info-left"><span id="above-field-info-left-distanceToGoal"></span><br><span id="above-field-info-left-machineLearningTest"></span></span>
 	<p><span id="above-field-info-time">00:00</span> <span id="above-field-info-paused">(Paused)</span></p>
 	<span id="above-field-info-right"><span id="above-field-info-right-pressingIndex"></span><br><span id="above-field-info-right-duel"></span></span>
 </div>

@@ -47,9 +47,11 @@ class FieldObjectStateConsumer extends AbstractStreamConsumer {
 					var y = fieldObjectStateStreamElement.positions[0].y;
 					field.updateObject(playerId, x, y);
 
+					var generationTimestamp = parseInt(fieldObjectStateStreamElement.generationTimestamp);
+
 					if(fieldObjectStateStreamElement.objectIdentifiers[0] === "BALL") {
-						statisticsAndGraphs.addValueToGraph("ballZPosition", fieldObjectStateStreamElement.positions[0].z);
-						statisticsAndGraphs.addValueToGraph("ballAbsVelocity", fieldObjectStateStreamElement.payload.vabs);
+						statisticsAndGraphs.addValueToGraph("ballZPosition", fieldObjectStateStreamElement.positions[0].z, generationTimestamp);
+						statisticsAndGraphs.addValueToGraph("ballAbsVelocity", fieldObjectStateStreamElement.payload.vabs, generationTimestamp);
 					}
 				}
 			}

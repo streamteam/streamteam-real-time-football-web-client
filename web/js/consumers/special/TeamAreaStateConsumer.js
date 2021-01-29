@@ -47,8 +47,10 @@ class TeamAreaStateConsumer extends AbstractStreamConsumer {
 					var mbrSurface = parseFloat(teamAreaStateStreamElement.payload.mbrSurface);
 					var pchSurface = parseFloat(teamAreaStateStreamElement.payload.pchSurface);
 
-					statisticsAndGraphs.addValueToGraph("mbrSurface-"+teamId, mbrSurface);
-					statisticsAndGraphs.addValueToGraph("pchSurface-"+teamId, pchSurface);
+					var generationTimestamp = parseInt(teamAreaStateStreamElement.generationTimestamp);
+
+					statisticsAndGraphs.addValueToGraph("mbrSurface-"+teamId, mbrSurface, generationTimestamp);
+					statisticsAndGraphs.addValueToGraph("pchSurface-"+teamId, pchSurface, generationTimestamp);
 				}
 			}
 		}

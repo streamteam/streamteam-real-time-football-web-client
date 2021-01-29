@@ -46,6 +46,7 @@ class MatchMetadataConsumer extends AbstractStreamConsumer {
 				var matchesStreamElement = decodeBase64EncodedImmutableDataStreamElement(jsonResult.d[i].v);
 
 				var matchId = jsonResult.d[i].k;
+				var generationTimestampFirstDataStreamElementOfTheMatch = matchesStreamElement.payload.generationTimestampFirstDataStreamElementOfTheMatch;
 				var fieldLength = matchesStreamElement.payload.fieldLength;
 				var fieldWidth = matchesStreamElement.payload.fieldWidth;
 				var matchStartUnixTs = matchesStreamElement.payload.matchStartUnixTs;
@@ -63,6 +64,7 @@ class MatchMetadataConsumer extends AbstractStreamConsumer {
 
 					this.videoPath = videoPath;
 					this.matchStartVideoOffset = matchStartVideoOffset;
+					this.generationTimestampFirstDataStreamElementOfTheMatch = generationTimestampFirstDataStreamElementOfTheMatch;
 
 					if (typeof field !== 'undefined' && typeof userInteraction !== 'undefined') {
 						if (typeof field.maxXInM === 'undefined' && typeof field.minXInM === 'undefined' && typeof field.maxYInM === 'undefined' && typeof field.minYInM === 'undefined') {

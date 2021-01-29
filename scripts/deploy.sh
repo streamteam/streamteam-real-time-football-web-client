@@ -21,8 +21,9 @@
 # Script which deploys the Real-Time Football Web Client without the video
 
 IP="10.34.58.65"
+USER="ubuntu"
+KEY="$HOME/.ssh/DemoMAAS"
 FOLDER="/var/www/html/real-time-football-web-client"
-KEY="/cygdrive/c/Users/proluk00/.ssh/lukasPMAAS"
 ARCHIVENAME="real-time-football-web-client-web.tar"
 
 #http://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
@@ -42,21 +43,21 @@ tar -cf ../$ARCHIVENAME ./ --exclude=./vid/*
 cd ..
 
 echo "Remove $ARCHIVENAME from $IP"
-ssh -i $KEY ubuntu@$IP "rm $ARCHIVENAME"
+ssh -i $KEY $USER@$IP "rm $ARCHIVENAME"
 
 echo "Delete all but video from $IP"
 # https://superuser.com/questions/607264/exclude-subfolders-with-specific-files-in-recursive-rm-rf-folder
-ssh -i $KEY ubuntu@$IP "find $FOLDER ! -regex $FOLDER/vid/* -delete"
+ssh -i $KEY $USER@$IP "find $FOLDER ! -regex $FOLDER/vid/* -delete"
 
 echo "Copy $ARCHIVENAME to $IP"
-scp -i $KEY ./$ARCHIVENAME ubuntu@$IP:$ARCHIVENAME
+scp -i $KEY ./$ARCHIVENAME $USER@$IP:$ARCHIVENAME
 
 echo "Extract $ARCHIVENAME at $IP"
-ssh -i $KEY ubuntu@$IP "mkdir $FOLDER"
-ssh -i $KEY ubuntu@$IP "tar -xf $ARCHIVENAME -C $FOLDER"
+ssh -i $KEY $USER@$IP "mkdir $FOLDER"
+ssh -i $KEY $USER@$IP "tar -xf $ARCHIVENAME -C $FOLDER"
 
 echo "Remove $ARCHIVENAME from $IP"
-ssh -i $KEY ubuntu@$IP "rm $ARCHIVENAME"
+ssh -i $KEY $USER@$IP "rm $ARCHIVENAME"
 
 echo "Remove $ARCHIVENAME locally"
 rm $ARCHIVENAME
